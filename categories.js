@@ -1,0 +1,8 @@
+const Categories = (() => {
+  let modal;
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function init(){modal=new mdb.Modal(document.getElementById('categoryModal'));document.getElementById('addCategory').addEventListener('click',()=>{document.getElementById('categoryForm').reset();modal.show();});document.getElementById('categoryForm').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('newCategoryName').value.trim(),type=document.getElementById('newCategoryType').value;if(!name)return;if(Store.categories(type).some(c=>c.name.toLowerCase()===name.toLowerCase())){App.toast('Kategori sudah tersedia.');return;}Store.addCategory(name,type);modal.hide();render();Transactions.refresh();App.toast('Kategori ditambahkan.');});render();document.addEventListener('click',e=>{const b=e.target.closest('[data-remove-category]');if(b&&confirm('Hapus kategori khusus ini?')){Store.removeCategory(b.dataset.removeCategory);render();Transactions.refresh();}});}
+  function renderGroup(type,id){const list=Store.categories(type);document.getElementById(id).innerHTML=list.map(c=>`<div class="managed-category"><div class="managed-category-name"><span class="managed-category-icon"><i class="bi ${c.icon||'bi-tag'}"></i></span>${esc(c.name)}</div>${c.custom?`<button class="action-btn" data-remove-category="${esc(c.id)}" title="Hapus kategori"><i class="bi bi-trash3"></i></button>`:'<span class="muted small">Default</span>'}</div>`).join('');}
+  function render(){renderGroup('income','incomeCategories');renderGroup('expense','expenseCategories');}
+  return {init,render};
+})();

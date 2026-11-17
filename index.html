@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#16a34a" />
+    <meta
+      name="description"
+      content="FINTRACK - Personal finance tracker with automatic Android notification integration."
+    />
+    <title>FINTRACK — Personal Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link href="./style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#" data-page="dashboard"
+          ><span class="brand-mark"><i class="bi bi-wallet2"></i></span
+          ><span>fin<span>track</span></span></a
+        >
+        <div class="sidebar-label">MENU UTAMA</div>
+        <nav class="nav-menu">
+          <button class="nav-link active" data-page="dashboard">
+            <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+          </button>
+          <button class="nav-link" data-page="transactions">
+            <i class="bi bi-arrow-left-right"></i><span>Transaksi</span>
+          </button>
+          <button class="nav-link" data-page="analytics">
+            <i class="bi bi-bar-chart-line"></i><span>Analitik</span>
+          </button>
+          <button class="nav-link" data-page="categories">
+            <i class="bi bi-tags"></i><span>Kategori</span>
+          </button>
+          <button class="nav-link" data-page="integration">
+            <i class="bi bi-phone"></i><span>Integrasi Android</span
+            ><span class="nav-dot"></span>
+          </button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-label">PREFERENSI</div>
+          <button class="nav-link" data-page="settings">
+            <i class="bi bi-gear"></i><span>Pengaturan</span>
+          </button>
+          <div class="sidebar-tip">
+            <div class="tip-icon"><i class="bi bi-shield-check"></i></div>
+            <strong>Data tetap privat</strong>
+            <p>Transaksi disimpan di perangkat ini, bukan di server.</p>
+          </div>
+          <div class="sidebar-foot">FINTRACK <span>v1.0.0</span></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button
+              class="icon-btn mobile-menu"
+              id="menuToggle"
+              aria-label="Buka menu"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <div>
+              <div class="eyebrow" id="pageEyebrow">OVERVIEW</div>
+              <h1 id="pageTitle">Dashboard</h1>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <div class="connection-pill" id="connectionPill">
+              <span class="status-dot"></span
+              ><span id="connectionText">Mode simulasi</span>
+            </div>
+            <button class="icon-btn" id="themeToggle" title="Ganti tema">
+              <i class="bi bi-moon-stars"></i>
+            </button>
+            <button class="avatar" title="Pengguna">IA</button>
+          </div>
+        </header>
+
+        <div class="page-wrap">
+          <section class="page-section active" id="page-dashboard">
+            <div class="welcome-row">
+              <div>
+                <p class="muted mb-1" id="todayLabel">Ringkasan keuangan</p>
+                <h2>Kelola uangmu dengan <span>lebih cerdas.</span></h2>
+                <p class="muted">
+                  Pantau arus kas dan pahami ke mana uangmu pergi.
+                </p>
+              </div>
+              <button
+                class="btn btn-success rounded-pill px-4"
+                id="addTransactionTop"
+              >
+                <i class="bi bi-plus-lg me-2"></i>Tambah transaksi
+              </button>
+            </div>
+            <div class="filter-bar">
+              <div class="filter-title">
+                <i class="bi bi-calendar3"></i><span>Periode laporan</span>
+              </div>
+              <select
+                class="form-select form-select-sm period-select"
+                id="dashboardPeriod"
+              >
+                <option value="month">Bulan ini</option>
+                <option value="today">Hari ini</option>
+                <option value="7">7 hari terakhir</option>
+                <option value="30">30 hari terakhir</option>
+                <option value="lastMonth">Bulan lalu</option>
+                <option value="year">Tahun ini</option>
+                <option value="all">Semua waktu</option>
+              </select>
+            </div>
+            <div class="summary-grid">
+              <article class="summary-card balance-card">
+                <div class="summary-top">
+                  <span>Total saldo</span
+                  ><span class="summary-icon green"
+                    ><i class="bi bi-wallet2"></i
+                  ></span>
+                </div>
+                <div class="money-line">
+                  <h3 id="totalBalance">Rp 0</h3>
+                  <button
+                    class="mini-icon"
+                    id="toggleBalance"
+                    title="Sembunyikan saldo"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                <div class="summary-foot">
+                  <span class="trend positive"
+                    ><i class="bi bi-shield-check"></i> Saldo berjalan</span
+                  ><span class="muted small">Income − expense</span>
+                </div>
+              </article>
+              <article class="summary-card">
+                <div class="summary-top">
+                  <span>Total pemasukan</span
+                  ><span class="summary-icon pale-green"
+                    ><i class="bi bi-graph-up-arrow"></i
+                  ></span>
+                </div>
+                <h3 id="totalIncome">Rp 0</h3>
+                <div class="summary-foot">
+                  <span class="trend positive"
+                    ><i class="bi bi-arrow-up-right"></i> Pemasukan</span
+                  ><span class="muted small" id="incomeCount">0 transaksi</span>
+                </div>
+              </article>
+              <article class="summary-card">
+                <div class="summary-top">
+                  <span>Total pengeluaran</span
+                  ><span class="summary-icon pale-red"
+                    ><i class="bi bi-graph-down-arrow"></i
+                  ></span>
+                </div>
+                <h3 id="totalExpense">Rp 0</h3>
+                <div class="summary-foot">
+                  <span class="trend negative"
+                    ><i class="bi bi-arrow-down-right"></i> Pengeluaran</span
+                  ><span class="muted small" id="expenseCount"
+                    >0 transaksi</span
+                  >
+                </div>
+              </article>
+              <article class="summary-card">
+                <div class="summary-top">
+                  <span>Tabungan bersih</span
+                  ><span class="summary-icon pale-blue"
+                    ><i class="bi bi-piggy-bank"></i
+                  ></span>
+                </div>
+                <h3 id="netSavings">Rp 0</h3>
+                <div class="summary-foot">
+                  <span class="trend neutral" id="savingRate"
+                    >0% saving rate</span
+                  ><span class="muted small">Periode terpilih</span>
+                </div>
+              </article>
+            </div>
+            <div class="content-grid">
+              <article class="panel chart-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Arus kas</h3>
+                    <p class="muted">Perbandingan pemasukan dan pengeluaran</p>
+                  </div>
+                  <span class="legend"
+                    ><i class="legend-dot income-dot"></i>Masuk
+                    <i class="legend-dot expense-dot"></i>Keluar</span
+                  >
+                </div>
+                <div class="chart-area">
+                  <canvas id="cashflowChart"></canvas>
+                </div>
+              </article>
+              <article class="panel chart-panel category-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Pengeluaran</h3>
+                    <p class="muted">Berdasarkan kategori</p>
+                  </div>
+                  <button class="text-action" data-page="analytics">
+                    Detail <i class="bi bi-arrow-up-right"></i>
+                  </button>
+                </div>
+                <div class="doughnut-wrap">
+                  <canvas id="categoryChart"></canvas>
+                  <div class="doughnut-center">
+                    <span>Total keluar</span
+                    ><strong id="doughnutTotal">Rp 0</strong>
+                  </div>
+                </div>
+                <div class="category-legend" id="categoryLegend"></div>
+              </article>
+            </div>
+            <article class="panel recent-panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Transaksi terbaru</h3>
+                  <p class="muted">Aktivitas keuangan terakhir</p>
+                </div>
+                <button class="text-action" data-page="transactions">
+                  Lihat semua <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
+              <div id="recentTransactions"></div>
+            </article>
+          </section>
+
+          <section class="page-section" id="page-transactions">
+            <div class="section-intro">
+              <div>
+                <h2>Riwayat transaksi</h2>
+                <p class="muted">
+                  Cari, filter, dan kelola seluruh aktivitas keuanganmu.
+                </p>
+              </div>
+              <button
+                class="btn btn-success rounded-pill px-4"
+                id="addTransactionHistory"
+              >
+                <i class="bi bi-plus-lg me-2"></i>Tambah transaksi
+              </button>
+            </div>
+            <article class="panel history-panel">
+              <div class="history-toolbar">
+                <div class="search-box">
+                  <i class="bi bi-search"></i
+                  ><input
+                    id="transactionSearch"
+                    type="search"
+                    placeholder="Cari transaksi..."
+                  />
+                </div>
+                <select class="form-select form-select-sm" id="typeFilter">
+                  <option value="all">Semua tipe</option>
+                  <option value="income">Pemasukan</option>
+                  <option value="expense">Pengeluaran</option>
+                </select>
+                <select class="form-select form-select-sm" id="categoryFilter">
+                  <option value="all">Semua kategori</option>
+                </select>
+                <select class="form-select form-select-sm" id="sourceFilter">
+                  <option value="all">Semua sumber</option>
+                  <option value="automatic">Otomatis</option>
+                  <option value="manual">Manual</option>
+                </select>
+                <select class="form-select form-select-sm" id="sortFilter">
+                  <option value="newest">Terbaru</option>
+                  <option value="oldest">Terlama</option>
+                </select>
+              </div>
+              <div class="date-filter-row">
+                <div class="date-range">
+                  <label>Dari tanggal</label
+                  ><input
+                    class="form-control form-control-sm"
+                    type="date"
+                    id="startDate"
+                  />
+                </div>
+                <div class="date-range">
+                  <label>Sampai tanggal</label
+                  ><input
+                    class="form-control form-control-sm"
+                    type="date"
+                    id="endDate"
+                  />
+                </div>
+                <button class="btn btn-light btn-sm" id="clearFilters">
+                  Reset filter</button
+                ><button
+                  class="btn btn-outline-success btn-sm ms-auto"
+                  id="exportCsv"
+                >
+                  <i class="bi bi-download me-1"></i>Export CSV
+                </button>
+              </div>
+              <div class="table-responsive desktop-table">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>TRANSAKSI</th>
+                      <th>KATEGORI</th>
+                      <th>TANGGAL</th>
+                      <th>SUMBER</th>
+                      <th class="text-end">JUMLAH</th>
+                      <th class="text-end">AKSI</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transactionTableBody"></tbody>
+                </table>
+              </div>
+              <div
+                class="mobile-transaction-list"
+                id="mobileTransactionList"
+              ></div>
+              <div class="empty-state d-none" id="transactionEmpty">
+                <i class="bi bi-receipt"></i><strong>Belum ada transaksi</strong
+                ><span
+                  >Transaksi yang cocok dengan filter akan muncul di sini.</span
+                >
+              </div>
+              <div class="table-footer">
+                <span id="transactionCountLabel">0 transaksi</span
+                ><button class="text-action" id="clearAllTransactions">
+                  Hapus semua transaksi
+                </button>
+              </div>
+            </article>
+          </section>
+
+          <section class="page-section" id="page-analytics">
+            <div class="section-intro">
+              <div>
+                <h2>Analitik keuangan</h2>
+                <p class="muted">Kenali pola pemasukan dan pengeluaranmu.</p>
+              </div>
+              <select
+                class="form-select form-select-sm analytics-period"
+                id="analyticsPeriod"
+              >
+                <option value="month">Bulan ini</option>
+                <option value="7">7 hari terakhir</option>
+                <option value="30">30 hari terakhir</option>
+                <option value="year">Tahun ini</option>
+                <option value="all">Semua waktu</option>
+              </select>
+            </div>
+            <div class="summary-grid compact-grid">
+              <article class="summary-card">
+                <span class="muted">Pemasukan periode</span>
+                <h3 id="analyticsIncome">Rp 0</h3>
+              </article>
+              <article class="summary-card">
+                <span class="muted">Pengeluaran periode</span>
+                <h3 id="analyticsExpense">Rp 0</h3>
+              </article>
+              <article class="summary-card">
+                <span class="muted">Selisih bersih</span>
+                <h3 id="analyticsNet">Rp 0</h3>
+              </article>
+              <article class="summary-card">
+                <span class="muted">Jumlah transaksi</span>
+                <h3 id="analyticsCount">0</h3>
+              </article>
+            </div>
+            <div class="content-grid analytics-grid">
+              <article class="panel chart-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Tren keuangan</h3>
+                    <p class="muted">Pemasukan vs pengeluaran</p>
+                  </div>
+                </div>
+                <div class="chart-area tall">
+                  <canvas id="analyticsLineChart"></canvas>
+                </div>
+              </article>
+              <article class="panel chart-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Distribusi pengeluaran</h3>
+                    <p class="muted">Proporsi setiap kategori</p>
+                  </div>
+                </div>
+                <div class="chart-area tall">
+                  <canvas id="analyticsDoughnutChart"></canvas>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page-section" id="page-categories">
+            <div class="section-intro">
+              <div>
+                <h2>Kategori transaksi</h2>
+                <p class="muted">
+                  Atur kategori agar pencatatan lebih terorganisir.
+                </p>
+              </div>
+              <button
+                class="btn btn-success rounded-pill px-4"
+                id="addCategory"
+              >
+                <i class="bi bi-plus-lg me-2"></i>Kategori baru
+              </button>
+            </div>
+            <div class="category-management-grid">
+              <article class="panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>
+                      <span class="category-heading-dot green-dot"></span
+                      >Pemasukan
+                    </h3>
+                    <p class="muted">Kategori uang masuk</p>
+                  </div>
+                </div>
+                <div id="incomeCategories" class="managed-categories"></div>
+              </article>
+              <article class="panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>
+                      <span class="category-heading-dot red-dot"></span
+                      >Pengeluaran
+                    </h3>
+                    <p class="muted">Kategori uang keluar</p>
+                  </div>
+                </div>
+                <div id="expenseCategories" class="managed-categories"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page-section" id="page-integration">
+            <div class="section-intro">
+              <div>
+                <h2>Integrasi Android</h2>
+                <p class="muted">
+                  Hubungkan notifikasi transaksi dari aplikasi perbankan dan
+                  e-wallet.
+                </p>
+              </div>
+            </div>
+            <div class="integration-grid">
+              <article class="panel integration-main">
+                <div class="integration-hero">
+                  <div class="integration-icon">
+                    <i class="bi bi-phone"></i>
+                  </div>
+                  <div>
+                    <span class="status-badge" id="integrationStatusBadge"
+                      >SIMULASI BROWSER</span
+                    >
+                    <h3>Android Notification Listener</h3>
+                    <p class="muted">
+                      Terima notifikasi transaksi dan catat secara otomatis.
+                    </p>
+                  </div>
+                </div>
+                <div class="integration-status-row">
+                  <div>
+                    <span class="muted small">Status koneksi</span
+                    ><strong id="integrationStatusText"
+                      >Mode simulasi browser aktif</strong
+                    >
+                  </div>
+                  <span
+                    class="status-dot large-dot"
+                    id="integrationStatusDot"
+                  ></span>
+                </div>
+                <div class="integration-actions">
+                  <button class="btn btn-success" id="requestAndroidPermission">
+                    <i class="bi bi-link-45deg me-2"></i>Cek koneksi Android</button
+                  ><button
+                    class="btn btn-outline-secondary"
+                    id="testNotification"
+                  >
+                    <i class="bi bi-bell me-2"></i>Kirim notifikasi uji
+                  </button>
+                </div>
+                <div class="notice-box">
+                  <i class="bi bi-info-circle"></i>
+                  <div>
+                    <strong>Perlu aplikasi Android pendamping</strong>
+                    <p>
+                      Browser biasa tidak diizinkan membaca notifikasi aplikasi
+                      lain. Gunakan Android WebView wrapper yang tersedia di
+                      folder <code>android/</code> pada paket proyek ini, lalu
+                      aktifkan izin Notification Access dari pengaturan Android.
+                    </p>
+                  </div>
+                </div>
+                <div class="supported-apps">
+                  <span class="muted small">Contoh sumber notifikasi</span>
+                  <div class="app-chips">
+                    <span>BCA / myBCA</span><span>BRImo</span><span>Livin'</span
+                    ><span>BNI</span><span>DANA</span><span>GoPay</span
+                    ><span>OVO</span><span>ShopeePay</span>
+                  </div>
+                </div>
+              </article>
+              <article class="panel notification-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Simulasi notifikasi</h3>
+                    <p class="muted">Uji parser tanpa perangkat Android.</p>
+                  </div>
+                  <span class="demo-tag">DEMO</span>
+                </div>
+                <label class="form-label">Jenis notifikasi</label
+                ><select class="form-select mb-3" id="demoType">
+                  <option value="expense">Pembayaran QRIS</option>
+                  <option value="income">Transfer masuk</option>
+                  <option value="transfer">Transfer keluar</option>
+                  <option value="salary">Gaji diterima</option>
+                  <option value="wallet">Pembayaran e-wallet</option>
+                  <option value="withdraw">Tarik tunai</option></select
+                ><label class="form-label">Nominal (Rp)</label
+                ><input
+                  class="form-control mb-3"
+                  id="demoAmount"
+                  type="number"
+                  min="1"
+                  value="250000"
+                /><label class="form-label">Aplikasi sumber</label
+                ><select class="form-select mb-3" id="demoApp">
+                  <option>BCA Mobile</option>
+                  <option>myBCA</option>
+                  <option>BRImo</option>
+                  <option>Livin' by Mandiri</option>
+                  <option>DANA</option>
+                  <option>GoPay</option>
+                  <option>OVO</option>
+                  <option>ShopeePay</option></select
+                ><button class="btn btn-success w-100" id="runDemo">
+                  <i class="bi bi-play-fill me-2"></i>Simulasikan transaksi
+                </button>
+                <div class="last-notification">
+                  <span class="muted small">Notifikasi terakhir</span
+                  ><strong id="lastNotification"
+                    >Belum ada notifikasi diterima</strong
+                  >
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="page-section" id="page-settings">
+            <div class="section-intro">
+              <div>
+                <h2>Pengaturan</h2>
+                <p class="muted">
+                  Sesuaikan pengalaman FINTRACK dan kelola data lokalmu.
+                </p>
+              </div>
+            </div>
+            <div class="settings-grid">
+              <article class="panel settings-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Preferensi tampilan</h3>
+                    <p class="muted">Pengaturan visual aplikasi</p>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Mode tampilan</strong
+                    ><span class="muted">Pilih tema terang atau gelap</span>
+                  </div>
+                  <button class="theme-choice" id="settingsTheme">
+                    <i class="bi bi-moon-stars"></i><span>Dark mode</span>
+                  </button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Mata uang</strong
+                    ><span class="muted">Format nilai transaksi</span>
+                  </div>
+                  <span class="setting-value">Indonesian Rupiah (IDR)</span>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Format tanggal</strong
+                    ><span class="muted">Format tanggal histori</span>
+                  </div>
+                  <span class="setting-value">DD/MM/YYYY</span>
+                </div>
+              </article>
+              <article class="panel settings-panel">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Data & privasi</h3>
+                    <p class="muted">
+                      Data tersimpan secara lokal di browser ini.
+                    </p>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Backup data</strong
+                    ><span class="muted"
+                      >Unduh transaksi dan pengaturan (JSON)</span
+                    >
+                  </div>
+                  <button
+                    class="btn btn-outline-success btn-sm"
+                    id="exportJson"
+                  >
+                    <i class="bi bi-download me-1"></i>Export
+                  </button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Import backup</strong
+                    ><span class="muted">Pulihkan data dari file JSON</span>
+                  </div>
+                  <label class="btn btn-outline-secondary btn-sm mb-0"
+                    >Import<input
+                      type="file"
+                      id="importJson"
+                      accept="application/json"
+                      hidden
+                  /></label>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Hapus seluruh data</strong
+                    ><span class="muted">Tidak dapat dibatalkan</span>
+                  </div>
+                  <button class="btn btn-outline-danger btn-sm" id="resetData">
+                    Reset data
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+        <footer class="app-footer">
+          <span>© 2026 FINTRACK</span
+          ><span
+            >Dibuat untuk pengelolaan keuangan pribadi
+            <i class="bi bi-heart-fill"></i
+          ></span>
+        </footer>
+      </main>
+    </div>
+
+    <div
+      class="modal fade"
+      id="transactionModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <h5 class="modal-title" id="transactionModalTitle">
+                Tambah transaksi
+              </h5>
+              <p class="muted small mb-0">
+                Lengkapi detail transaksi keuangan.
+              </p>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-mdb-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="transactionForm">
+            <div class="modal-body">
+              <input type="hidden" id="editTransactionId" />
+              <div class="type-toggle mb-3">
+                <button
+                  type="button"
+                  class="type-option active"
+                  data-type="expense"
+                >
+                  <i class="bi bi-arrow-up-right"></i> Pengeluaran</button
+                ><button type="button" class="type-option" data-type="income">
+                  <i class="bi bi-arrow-down-left"></i> Pemasukan
+                </button>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nama transaksi</label
+                ><input
+                  class="form-control"
+                  id="transactionName"
+                  required
+                  placeholder="Contoh: Makan siang"
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nominal (Rp)</label
+                ><input
+                  class="form-control"
+                  id="transactionAmount"
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                  placeholder="0"
+                />
+              </div>
+              <div class="form-grid">
+                <div class="mb-3">
+                  <label class="form-label">Kategori</label
+                  ><select
+                    class="form-select"
+                    id="transactionCategory"
+                    required
+                  ></select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Metode pembayaran</label
+                  ><select class="form-select" id="transactionMethod">
+                    <option>Transfer Bank</option>
+                    <option>Cash</option>
+                    <option>QRIS</option>
+                    <option>E-Wallet</option>
+                    <option>Kartu Debit</option>
+                    <option>Lainnya</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="mb-3">
+                  <label class="form-label">Tanggal</label
+                  ><input
+                    class="form-control"
+                    id="transactionDate"
+                    type="date"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Waktu</label
+                  ><input
+                    class="form-control"
+                    id="transactionTime"
+                    type="time"
+                  />
+                </div>
+              </div>
+              <div class="mb-1">
+                <label class="form-label">Catatan (opsional)</label
+                ><textarea
+                  class="form-control"
+                  id="transactionNote"
+                  rows="2"
+                  placeholder="Tambahkan catatan..."
+                ></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-light rounded-pill"
+                data-mdb-dismiss="modal"
+              >
+                Batal</button
+              ><button type="submit" class="btn btn-success rounded-pill px-4">
+                Simpan transaksi
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Kategori baru</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-mdb-dismiss="modal"
+            ></button>
+          </div>
+          <form id="categoryForm">
+            <div class="modal-body">
+              <label class="form-label">Nama kategori</label
+              ><input
+                class="form-control mb-3"
+                id="newCategoryName"
+                required
+                maxlength="30"
+              /><label class="form-label">Jenis kategori</label
+              ><select class="form-select" id="newCategoryType">
+                <option value="expense">Pengeluaran</option>
+                <option value="income">Pemasukan</option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-light rounded-pill"
+                type="button"
+                data-mdb-dismiss="modal"
+              >
+                Batal</button
+              ><button class="btn btn-success rounded-pill" type="submit">
+                Simpan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="appToast"
+        class="toast align-items-center text-bg-dark border-0"
+        role="alert"
+      >
+        <div class="d-flex">
+          <div class="toast-body" id="toastMessage">Berhasil.</div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-mdb-dismiss="toast"
+          ></button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="./storage.js"></script>
+    <script src="./categories.js"></script>
+    <script src="./transactions.js"></script>
+    <script src="./analytics.js"></script>
+    <script src="./settings.js"></script>
+    <script src="./notification-listener.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
